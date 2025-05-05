@@ -1,16 +1,19 @@
 package com.elissandro.hdcontrol.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "products")
+@Table(name = "tb_product")
 public class Product implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -22,6 +25,8 @@ public class Product implements Serializable {
 	private String brand;
 	private Double price;
 	
+	@OneToMany(mappedBy = "id.product")
+	private Set<OrderItem> items = new HashSet<>();
 	
 	public Product() {
 	}
@@ -77,6 +82,14 @@ public class Product implements Serializable {
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
+	}
+	
+	public Set<Order> getOrders() {
+		Set<Order> orders = new HashSet<>();
+		for (OrderItem item : items) {
+			orders.add(item.getOrder());
+		}
+		return orders;
 	}
 
 	@Override
