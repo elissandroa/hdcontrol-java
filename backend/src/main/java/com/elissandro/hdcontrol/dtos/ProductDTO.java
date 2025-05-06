@@ -71,6 +71,7 @@ public class ProductDTO implements Serializable {
 	public void setPrice(Double price) {
 		this.price = price;
 	}
+
 }
 
 
