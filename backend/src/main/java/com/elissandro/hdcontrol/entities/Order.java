@@ -10,6 +10,8 @@ import com.elissandro.hdcontrol.entities.enums.OrderStatus;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,7 +32,10 @@ public class Order implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private LocalDate deliveryDate;
+	
+	@Enumerated(EnumType.STRING)
 	private OrderStatus status;
+	
 	private String serviceDescription;
 	private String observation;
 	
@@ -124,6 +129,10 @@ public class Order implements Serializable {
 	
 	public void setPayment(Payment payment) {
 		this.payment = payment;
+	}
+	
+	public Product getProduct() {
+		return products.iterator().next();
 	}
 
 	@Override

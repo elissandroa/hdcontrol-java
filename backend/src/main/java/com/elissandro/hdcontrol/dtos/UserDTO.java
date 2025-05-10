@@ -13,7 +13,7 @@ public class UserDTO implements Serializable {
 	private String lastName;
 	private String email;
 	private String phone;
-	
+
 	public UserDTO() {
 	}
 	
@@ -72,8 +72,7 @@ public class UserDTO implements Serializable {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-
-
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

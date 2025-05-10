@@ -10,10 +10,15 @@ import org.springframework.data.jpa.repository.Query;
 import com.elissandro.hdcontrol.entities.Order;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
-	
-	@Query("SELECT obj FROM Order obj JOIN FETCH obj.items WHERE obj.id = :orderId")
-	Optional<Order> findByOrderId(Long orderId);
 
-	@Query("SELECT obj FROM Order obj JOIN FETCH obj.items")
-	Page<Order> findAll(Pageable pageable);
+
+	@Query(value = "SELECT obj FROM Order obj JOIN FETCH obj.items WHERE obj.user.id = :userId",
+			countQuery = "SELECT COUNT(obj) FROM Order obj JOIN obj.items WHERE obj.user.id = :userId")
+	Page<Order> findAll(Pageable pageable, Integer userId);
+	
+	@SuppressWarnings("null")
+	@Query("SELECT obj FROM Order obj JOIN FETCH obj.items WHERE obj.id = :id")
+	Optional<Order> findById(Long id);
+
+	
 }

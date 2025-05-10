@@ -21,6 +21,8 @@ public class OrderDTO {
 	List<OrderItemDTO> items = new ArrayList<>();
 	private int totalQuantity;
 	
+	List<ProductDTO> products = new ArrayList<>();
+	
 	public OrderDTO() {
 	}
 	
@@ -102,6 +104,10 @@ public class OrderDTO {
 	
 	public Integer getTotalQuantity() {
 		return totalQuantity;
+	}
+	
+	public List<ProductDTO> getProducts() {
+		return products;
 	}
 
 }
