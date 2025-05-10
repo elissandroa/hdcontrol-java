@@ -1,7 +1,9 @@
 package com.elissandro.hdcontrol.dtos;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import com.elissandro.hdcontrol.entities.User;
 
@@ -13,6 +15,8 @@ public class UserDTO implements Serializable {
 	private String lastName;
 	private String email;
 	private String phone;
+	
+	Set<RoleDTO> roles = new HashSet<>();
 
 	public UserDTO() {
 	}
@@ -31,6 +35,7 @@ public class UserDTO implements Serializable {
 		this.lastName = entity.getLastName();
 		this.email = entity.getEmail();
 		this.phone = entity.getPhone();
+		entity.getRoles().forEach(role -> this.roles.add(new RoleDTO(role)));
 	}
 
 	public Long getId() {
@@ -71,6 +76,10 @@ public class UserDTO implements Serializable {
 
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+	
+	public Set<RoleDTO> getRoles() {
+		return roles;
 	}
 	
 	@Override

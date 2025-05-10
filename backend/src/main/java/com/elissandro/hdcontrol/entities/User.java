@@ -95,6 +95,10 @@ public class User implements Serializable {
 		this.password = password;
 	}
 	
+	public Set<Role> getRoles() {
+		return roles;
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

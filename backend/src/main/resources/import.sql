@@ -1,5 +1,7 @@
 INSERT INTO TB_ROLE (authority) VALUES ('ROLE_USER');
 INSERT INTO TB_ROLE (authority) VALUES ('ROLE_ADMIN');
+INSERT INTO TB_ROLE (authority) VALUES ('ROLE_CLIENT');
+
 
 INSERT INTO TB_USER (first_name, last_name, email, phone, password) VALUES ('Maria','Silva', 'maria@gmail.com', '123456789', '123456');
 INSERT INTO TB_USER (first_name, last_name, email, phone, password) VALUES ('Jose','Pereira', 'jose@gmail.com', '987654321', '654321');
