@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.elissandro.hdcontrol.dtos.RoleDTO;
 import com.elissandro.hdcontrol.dtos.UserDTO;
+import com.elissandro.hdcontrol.dtos.UserInsertDTO;
 import com.elissandro.hdcontrol.entities.Role;
 import com.elissandro.hdcontrol.entities.User;
 import com.elissandro.hdcontrol.repositories.RoleRepository;
@@ -29,6 +31,9 @@ public class UserService {
 	
 	@Autowired
 	private RoleRepository roleRepository;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@Transactional(readOnly = true)
 	public Page<User> findAllPaged(Pageable pageable) {
@@ -43,15 +48,16 @@ public class UserService {
 	}
 
 	@Transactional
-	public User insert(UserDTO dto) {
+	public UserDTO insert(UserInsertDTO dto) {
 		User entity = new User();
 		Role role = new Role();
 		role.setId(3L);
 		dto.getRoles().clear();
 		dto.getRoles().add(new RoleDTO(role));
 		copyDtoToEntity(dto, entity);
+		entity.setPassword(passwordEncoder.encode(dto.getPassword()));
 		entity = repository.save(entity);
-		return entity;
+		return new UserDTO(entity);
 	}
 	
 	

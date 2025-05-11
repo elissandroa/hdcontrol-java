@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.elissandro.hdcontrol.dtos.UserDTO;
+import com.elissandro.hdcontrol.dtos.UserInsertDTO;
 import com.elissandro.hdcontrol.entities.User;
 import com.elissandro.hdcontrol.services.UserService;
 
@@ -42,10 +43,10 @@ public class UserController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<UserDTO> insert(@RequestBody UserDTO dto) {
-		User obj = service.insert(dto);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
-		return ResponseEntity.created(uri).body(new UserDTO(obj));
+	public ResponseEntity<UserDTO> insert(@RequestBody UserInsertDTO dto) {
+		UserDTO objDto = service.insert(dto);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(objDto.getId()).toUri();
+		return ResponseEntity.created(uri).body(objDto);
 	}
 	
 	@PutMapping("/{id}")

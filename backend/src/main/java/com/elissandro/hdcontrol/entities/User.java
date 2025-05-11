@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -25,7 +26,8 @@ public class User implements Serializable {
 	private Long id;
 	private String firstName;
 	private String lastName;
-	private String email;
+	@Column(unique = true)
+	String email;
 	private String phone;
 	private String password;
 	
