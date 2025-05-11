@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
+import com.elissandro.hdcontrol.entities.enums.PaymentStatus;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,6 +23,7 @@ public class Payment implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private Instant moment;
+	private PaymentStatus status;
 	
 	@OneToOne
 	@MapsId
@@ -29,10 +32,11 @@ public class Payment implements Serializable {
 	public Payment() {
 	}
 	
-	public Payment(Long id, Instant moment, Order order) {
+	public Payment(Long id, Instant moment, Order order, PaymentStatus status) {
 		this.id = id;
 		this.moment = moment;
 		this.order = order;
+		this.status = status;
 	}
 
 	public Long getId() {
@@ -57,6 +61,14 @@ public class Payment implements Serializable {
 
 	public void setOrder(Order order) {
 		this.order = order;
+	}
+	
+	public PaymentStatus getStatus() {
+		return status;
+	}
+	
+	public void setStatus(PaymentStatus status) {
+		this.status = status;
 	}
 
 	@Override

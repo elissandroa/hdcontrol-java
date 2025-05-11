@@ -1,10 +1,8 @@
 package com.elissandro.hdcontrol.entities.enums;
 
-public enum OrderStatus {
+public enum PaymentStatus {
+
 	PENDING,
-	SHIPPED,
-	READY,
-	DELIVERED,
-	FINALIZED,
+	PAID,
 	CANCELED;
 }
