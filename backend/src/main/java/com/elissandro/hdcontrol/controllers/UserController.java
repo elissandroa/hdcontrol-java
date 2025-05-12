@@ -18,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.elissandro.hdcontrol.dtos.UserDTO;
 import com.elissandro.hdcontrol.dtos.UserInsertDTO;
+import com.elissandro.hdcontrol.dtos.UserUpdateDTO;
 import com.elissandro.hdcontrol.entities.User;
 import com.elissandro.hdcontrol.services.UserService;
 
@@ -52,7 +53,7 @@ public class UserController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<UserDTO> update(@PathVariable Long id,@Valid @RequestBody UserDTO dto) {
+	public ResponseEntity<UserDTO> update(@PathVariable Long id,@Valid @RequestBody UserUpdateDTO dto) {
 		User obj = service.update(id, dto);
 		return ResponseEntity.ok().body(new UserDTO(obj));
 	}
