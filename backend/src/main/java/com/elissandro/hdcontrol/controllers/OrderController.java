@@ -21,6 +21,8 @@ import com.elissandro.hdcontrol.dtos.OrderDTO;
 import com.elissandro.hdcontrol.entities.Order;
 import com.elissandro.hdcontrol.services.OrderService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
@@ -44,14 +46,14 @@ public class OrderController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<OrderDTO> insert(@RequestBody OrderDTO dto) {
+	public ResponseEntity<OrderDTO> insert(@Valid @RequestBody OrderDTO dto) {
 		Order order = service.insert(dto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(order.getId()).toUri();
 		return ResponseEntity.created(uri).body(new OrderDTO(order));
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<OrderDTO> update(@PathVariable Long id, @RequestBody OrderDTO dto) {
+	public ResponseEntity<OrderDTO> update(@PathVariable Long id,@Valid @RequestBody OrderDTO dto) {
 		Order order = service.update(id, dto);
 		return ResponseEntity.ok().body(new OrderDTO(order));
 	}

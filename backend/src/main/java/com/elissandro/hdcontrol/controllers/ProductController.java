@@ -18,6 +18,8 @@ import com.elissandro.hdcontrol.dtos.ProductDTO;
 import com.elissandro.hdcontrol.entities.Product;
 import com.elissandro.hdcontrol.services.ProductService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/products")
 public class ProductController {
@@ -40,7 +42,7 @@ public class ProductController {
 	}
 
 	@PostMapping
-	public ResponseEntity<ProductDTO> insert(@RequestBody ProductDTO dto) {
+	public ResponseEntity<ProductDTO> insert(@Valid @RequestBody ProductDTO dto) {
 		Product entity = new Product();
 		copyDtoToEntity(dto, entity);
 		entity = service.insert(entity);
@@ -48,7 +50,7 @@ public class ProductController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO dto) {
+	public ResponseEntity<ProductDTO> update(@PathVariable Long id,@Valid @RequestBody ProductDTO dto) {
 		Product entity = service.findById(id);
 		copyDtoToEntity(dto, entity);
 		entity = service.update(id, entity);

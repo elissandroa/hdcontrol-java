@@ -4,13 +4,20 @@ import java.io.Serializable;
 
 import com.elissandro.hdcontrol.entities.Product;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+
 public class ProductDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Long id;
+	@NotBlank(message = "Campo obrigatório")
 	private String name;
+	@NotBlank(message = "Campo obrigatório")
 	private String description;
+	@NotBlank(message = "Campo obrigatório")
 	private String brand;
+	@Positive(message = "Campo deve ser maior que zero")
 	private Double price;
 	
 	public ProductDTO() {

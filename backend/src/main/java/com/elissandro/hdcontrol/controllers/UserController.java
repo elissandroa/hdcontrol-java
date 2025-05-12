@@ -21,6 +21,8 @@ import com.elissandro.hdcontrol.dtos.UserInsertDTO;
 import com.elissandro.hdcontrol.entities.User;
 import com.elissandro.hdcontrol.services.UserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -43,14 +45,14 @@ public class UserController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<UserDTO> insert(@RequestBody UserInsertDTO dto) {
+	public ResponseEntity<UserDTO> insert(@Valid @RequestBody UserInsertDTO dto) {
 		UserDTO objDto = service.insert(dto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(objDto.getId()).toUri();
 		return ResponseEntity.created(uri).body(objDto);
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody UserDTO dto) {
+	public ResponseEntity<UserDTO> update(@PathVariable Long id,@Valid @RequestBody UserDTO dto) {
 		User obj = service.update(id, dto);
 		return ResponseEntity.ok().body(new UserDTO(obj));
 	}
