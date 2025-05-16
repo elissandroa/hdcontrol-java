@@ -3,6 +3,8 @@ package com.elissandro.hdcontrol.entities;
 import java.io.Serializable;
 import java.util.Objects;
 
+import org.springframework.security.core.GrantedAuthority;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,7 +13,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_role")
-public class Role implements Serializable {
+public class Role implements Serializable, GrantedAuthority {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
@@ -35,6 +37,7 @@ public class Role implements Serializable {
 		this.id = id;
 	}
 
+	@Override
 	public String getAuthority() {
 		return authority;
 	}

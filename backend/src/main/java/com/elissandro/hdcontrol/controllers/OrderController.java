@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +31,7 @@ public class OrderController {
 	@Autowired
 	private OrderService service;
 
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER', 'ROLE_CLIENT')")
 	@GetMapping
 	public ResponseEntity<Page<OrderDTO>> findAll(
 			@RequestParam(defaultValue = "") Integer userId,
@@ -39,12 +41,14 @@ public class OrderController {
 		return ResponseEntity.ok().body(listDto);
 	}
 
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER', 'ROLE_CLIENT')")
 	@GetMapping("/{id}")
 	public ResponseEntity<OrderDTO> findById(@PathVariable Long id) {
 		OrderDTO dto = new OrderDTO(service.findById(id));
 		return ResponseEntity.ok().body(dto);
 	}
 	
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@PostMapping
 	public ResponseEntity<OrderDTO> insert(@Valid @RequestBody OrderDTO dto) {
 		Order order = service.insert(dto);
@@ -52,12 +56,14 @@ public class OrderController {
 		return ResponseEntity.created(uri).body(new OrderDTO(order));
 	}
 	
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@PutMapping("/{id}")
 	public ResponseEntity<OrderDTO> update(@PathVariable Long id,@Valid @RequestBody OrderDTO dto) {
 		Order order = service.update(id, dto);
 		return ResponseEntity.ok().body(new OrderDTO(order));
 	}
 	
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
 		service.delete(id);
