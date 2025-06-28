@@ -1,6 +1,5 @@
 package com.elissandro.hdcontrol.entities;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -22,7 +21,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_user")
-public class User implements Serializable, UserDetails {
+public class User implements UserDetails {
 	private static final long serialVersionUID = 1L;
 	
 	@Id

@@ -32,7 +32,7 @@ public class UserController {
 	@Autowired
 	private UserService service;
 	
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER', 'ROLE_CLIENT')")
 	@GetMapping(value = "/me")
 	public ResponseEntity<UserDTO> findMe(){
 		UserDTO dto = service.findMe();
