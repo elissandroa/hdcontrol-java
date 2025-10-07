@@ -40,6 +40,15 @@ public class OrderController {
 		Page<OrderDTO> listDto = list.map(x -> new OrderDTO(x));
 		return ResponseEntity.ok().body(listDto);
 	}
+	
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+	@GetMapping("/allorders")
+	public ResponseEntity<Page<OrderDTO>> findAllAdmin(
+			Pageable pageable) {
+		Page<Order> list = service.findAllPagedOrders(pageable);
+		Page<OrderDTO> listDto = list.map(x -> new OrderDTO(x));
+		return ResponseEntity.ok().body(listDto);
+	}
 
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER', 'ROLE_CLIENT')")
 	@GetMapping("/{id}")

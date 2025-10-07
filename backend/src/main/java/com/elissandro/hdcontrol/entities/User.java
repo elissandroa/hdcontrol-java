@@ -92,6 +92,7 @@ public class User implements UserDetails {
 		this.phone = phone;
 	}
 
+	@Override
 	public String getPassword() {
 		return password;
 	}

@@ -19,6 +19,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	@SuppressWarnings("null")
 	@Query("SELECT obj FROM Order obj JOIN FETCH obj.items WHERE obj.id = :id")
 	Optional<Order> findById(Long id);
+	
+	@Query(value = "SELECT obj FROM Order obj JOIN FETCH obj.items",
+			countQuery = "SELECT COUNT(obj) FROM Order obj JOIN obj.items")
+	Page<Order>findAllOrders(Pageable pageable);
 
 	
 }

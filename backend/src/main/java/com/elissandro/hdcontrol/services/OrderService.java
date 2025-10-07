@@ -44,7 +44,12 @@ public class OrderService {
 	public Page<Order> findAllPaged(Pageable pageable, Integer userId) {
 		return repository.findAll(pageable, userId);
 	}
-
+	
+	@Transactional(readOnly = true)
+	public Page<Order> findAllPagedOrders(Pageable pageable) {
+		return repository.findAllOrders(pageable);
+	}
+	
 	@Transactional(readOnly = true)
 	public Order findById(Long id) {
 		Optional<Order> obj = repository.findById(id);
