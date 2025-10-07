@@ -103,20 +103,6 @@ export function LoginPage({ onLogin, onForgotPassword }: LoginPageProps) {
               </div>
             )}
           </form>
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <p className="text-sm text-blue-700 mb-2">📝 Usuários de demonstração:</p>
-            <div className="text-xs space-y-1 text-blue-600">
-              <p><strong>Admin:</strong> admin@sistema.com / admin123</p>
-              <p><strong>Cliente:</strong> cliente@sistema.com / cliente123</p>
-              <p><strong>Usuário:</strong> usuario@sistema.com / usuario123</p>
-            </div>
-            <div className="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs">
-              <p className="text-yellow-700">
-                💡 <strong>Modo Demonstração:</strong> A API em localhost:8080 não está disponível. 
-                O sistema está funcionando com dados mockados para demonstração.
-              </p>
-            </div>
-          </div>
         </CardContent>
       </Card>
     </div>
