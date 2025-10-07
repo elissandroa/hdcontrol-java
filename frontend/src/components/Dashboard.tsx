@@ -108,8 +108,8 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
       // Buscar todos os pagamentos para atualizar status
       let paymentsData: any[] = [];
       try {
-        console.log('Buscando dados de pagamentos para resumo...');
-        paymentsData = await PaymentService.getPayments();
+        console.log('Buscando TODOS os dados de pagamentos para resumo...');
+        paymentsData = await PaymentService.getAllPayments();
         console.log('Pagamentos encontrados para resumo:', paymentsData.length);
       } catch (error) {
         console.error('Erro ao buscar pagamentos para resumo:', error);
@@ -120,6 +120,7 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
         const payment = paymentsData.find(p => p.order?.id === order.id);
         
         if (payment) {
+          console.log(`Resumo: Encontrado pagamento para ordem ${order.id}:`, payment);
           return {
             ...order,
             paymentDate: payment.moment,
@@ -129,6 +130,10 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
         
         return order;
       });
+
+      console.log(`Resumo: Processadas ${allOrders.length} ordens com ${paymentsData.length} pagamentos`);
+      console.log('IDs das ordens com pagamento:', paymentsData.map(p => p.order?.id).filter(id => id));
+      console.log('IDs de todas as ordens:', allOrders.map(o => o.id));
       
       // Calcular resumo financeiro
       const unpaidOrders = ordersWithPayments.filter(order => order.status !== 'PAID');
@@ -239,11 +244,11 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
         productsResponse = [];
       }
 
-      // Buscar todos os pagamentos de uma vez
+      // Buscar todos os pagamentos de uma vez (independente da paginação de ordens)
       let paymentsData: any[] = [];
       try {
-        console.log('Buscando dados de pagamentos...');
-        paymentsData = await PaymentService.getPayments();
+        console.log('Buscando TODOS os dados de pagamentos...');
+        paymentsData = await PaymentService.getAllPayments();
         console.log('Pagamentos encontrados:', paymentsData.length);
         console.log('Primeiro pagamento:', paymentsData[0]);
       } catch (error) {
@@ -263,10 +268,15 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
             // Se o pagamento está como PAID, atualizar o status da ordem também
             status: payment.status === 'PAID' ? 'PAID' as const : order.status
           };
+        } else {
+          // Log para ordens sem pagamento na página atual
+          console.log(`Nenhum pagamento encontrado para ordem ${order.id}`);
         }
         
         return order;
       });
+
+      console.log(`Processadas ${ordersResponse.length} ordens da página atual com ${paymentsData.length} pagamentos totais`);
 
       setProducts(productsResponse);
       
@@ -277,7 +287,6 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
       // Definir valores padrão em caso de erro
-      setAllOrders([]);
       setOrders([]);
       setProducts([]);
     } finally {
@@ -428,9 +437,6 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
       setOrders(orders.map(order => 
         order.id === updatedOrder.id ? updatedWithTotal : order
       ));
-      setAllOrders(allOrders.map(order => 
-        order.id === updatedOrder.id ? updatedWithTotal : order
-      ));
     } finally {
       setSelectedOrder(null);
       setStatusModalOrder(null);
@@ -487,7 +493,6 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
         total: 0
       };
       setOrders([mockOrder, ...orders]);
-      setAllOrders([mockOrder, ...allOrders]);
     } finally {
       setShowNewOrderModal(false);
     }

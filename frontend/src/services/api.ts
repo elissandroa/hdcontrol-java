@@ -321,7 +321,7 @@ export const AuthService = {
   // Alterar senha com token
   async resetPasswordWithToken(token: string, newPassword: string): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/auth/new-password`, {
-      method: 'PUT',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -541,19 +541,62 @@ export const UserService = {
 };
 
 export const PaymentService = {
-  async getPayments(): Promise<Payment[]> {
+  async getPayments(params: {
+    size?: number;
+    page?: number;
+  } = {}): Promise<Payment[]> {
     try {
-      const response = await httpClient.get<{ content: Payment[]; totalElements: number; totalPages: number } | Payment[]>('/payments');
+      // Por padrão, busca TODOS os pagamentos (size grande) para evitar problemas de paginação
+      const defaultParams = {
+        size: params.size || 9999,
+        page: params.page || 0
+      };
+      
+      const queryParams = new URLSearchParams();
+      queryParams.append('size', defaultParams.size.toString());
+      queryParams.append('page', defaultParams.page.toString());
+      
+      const queryString = queryParams.toString();
+      const url = `/payments?${queryString}`;
+      
+      console.log(`PaymentService.getPayments: Buscando pagamentos com URL: ${url}`);
+      
+      const response = await httpClient.get<{ content: Payment[]; totalElements: number; totalPages: number } | Payment[]>(url);
       
       // Se a resposta for um array direto, retorna como está
       if (Array.isArray(response)) {
+        console.log(`PaymentService.getPayments: Recebidos ${response.length} pagamentos (array direto)`);
         return response;
       }
       
       // Se a resposta for paginada, retorna o conteúdo
-      return response.content || [];
+      const content = response.content || [];
+      console.log(`PaymentService.getPayments: Recebidos ${content.length} pagamentos de ${response.totalElements} total`);
+      return content;
     } catch (error) {
       console.error('Erro ao buscar pagamentos:', error);
+      return [];
+    }
+  },
+
+  async getAllPayments(): Promise<Payment[]> {
+    try {
+      // Busca especificamente TODOS os pagamentos sem limitação
+      console.log('PaymentService.getAllPayments: Buscando TODOS os pagamentos...');
+      const response = await httpClient.get<{ content: Payment[]; totalElements: number; totalPages: number } | Payment[]>('/payments?size=9999&page=0');
+      
+      // Se a resposta for um array direto, retorna como está
+      if (Array.isArray(response)) {
+        console.log(`PaymentService.getAllPayments: Recebidos ${response.length} pagamentos (array direto)`);
+        return response;
+      }
+      
+      // Se a resposta for paginada, retorna o conteúdo
+      const content = response.content || [];
+      console.log(`PaymentService.getAllPayments: Recebidos ${content.length} pagamentos de ${response.totalElements} total`);
+      return content;
+    } catch (error) {
+      console.error('Erro ao buscar todos os pagamentos:', error);
       return [];
     }
   },
