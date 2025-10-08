@@ -300,16 +300,18 @@ export const AuthService = {
 
   // Solicitar token de recuperação de senha
   async requestPasswordRecovery(email: string): Promise<void> {
+    const recoveryData = {
+      to: email,
+      subject: "Recuperação de Senha",
+      body: "Recuperação de Senha você tem 30 minutos para utilizar o token contido nesse email: http://localhost:3000/recover-password/"
+    };
+
     const response = await fetch(`${API_BASE_URL}/auth/recover-token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        to: email,
-        subject: "Recuperação de Senha",
-        body: "Recuperação de Senha você tem 30 minutos para utilizar o token contido nesse email: http://localhost:3000/recover-password/"
-      }),
+      body: JSON.stringify(recoveryData),
     });
 
     if (!response.ok) {
@@ -334,47 +336,6 @@ export const AuthService = {
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`Erro ao alterar senha: ${errorText}`);
-    }
-  },
-
-  async requestPasswordRecovery(email: string): Promise<void> {
-    const recoveryData = {
-      to: email,
-      subject: "Recuperação de Senha",
-      body: "Recuperação de Senha você tem 30 minutos para utilizar o token contido nesse email:"
-    };
-
-    const response = await fetch(`${API_BASE_URL}/auth/recover-token`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(recoveryData),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Erro ao solicitar recuperação de senha: ${errorText}`);
-    }
-  },
-
-  async resetPassword(token: string, newPassword: string): Promise<void> {
-    const resetData = {
-      token,
-      newPassword
-    };
-
-    const response = await fetch(`${API_BASE_URL}/auth/new-password`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(resetData),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Erro ao redefinir senha: ${errorText}`);
     }
   }
 };

@@ -89,7 +89,7 @@ export function LoginPage({ onLogin, onForgotPassword }: LoginPageProps) {
                 'Entrar'
               )}
             </Button>
-            
+
             {onForgotPassword && (
               <div className="text-center">
                 <Button

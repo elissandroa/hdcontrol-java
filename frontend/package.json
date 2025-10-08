@@ -1,5 +1,5 @@
 {
-      "homepage": "https://elissandroa.github.io/hdcontrol-java/",
+      "homepage": "https://elissandroa.github.io/hdcontrol-java",
       "name": "Service Order Management System",
       "version": "0.1.0",
       "private": true,
@@ -56,8 +56,8 @@
       "scripts": {
             "dev": "vite",
             "build": "vite build",
-            "predeploy": "npm run build",
-            "deploy": "gh-pages -d dist",
-            "preview": "vite preview"
+            "preview": "vite preview",
+            "deploy": "npm run build && gh-pages -d dist --add",
+            "predeploy": "npm run build"
       }
 }
