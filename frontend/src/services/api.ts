@@ -1,5 +1,5 @@
 // Configurações da API
-const API_BASE_URL = 'eliss6171.c44.integrator.host/backend';
+const API_BASE_URL = 'eliss6171.c44.integrator.host:23729';
 const CLIENT_ID = 'myclientid';
 const CLIENT_SECRET = 'myclientsecret';
 
