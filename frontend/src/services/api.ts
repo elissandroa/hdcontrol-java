@@ -1,5 +1,5 @@
 // Configurações da API
-const API_BASE_URL = 'eliss6171.c44.integrator.host:23729';
+const API_BASE_URL = 'https://hdcontrol-proxy.vercel.app';
 const CLIENT_ID = 'myclientid';
 const CLIENT_SECRET = 'myclientsecret';
 
@@ -656,7 +656,7 @@ export const Utils = {
 
   // Formata data para exibição
   formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString('pt-BR');
+    return new Date(dateString).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
   },
 
   // Formata data para API (YYYY-MM-DD)

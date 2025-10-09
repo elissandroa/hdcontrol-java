@@ -28,7 +28,8 @@ public class EmailService {
             emailSender.send(message);
         } 
         catch (MailException e){
-        	throw new EmailException("Failed to send email");
+        	e.printStackTrace(); // Mostra erro real no log
+            throw new EmailException("Erro ao enviar email: " + e.getMessage());
         } 
     }
 }

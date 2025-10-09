@@ -666,7 +666,6 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
                         <TableHead>Total</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Entrega</TableHead>
-                        <TableHead>Atualização</TableHead>
                         <TableHead>Pagamento</TableHead>
                         <TableHead className="text-right">Ações</TableHead>
                       </TableRow>
@@ -680,9 +679,6 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
                           <TableCell>{getStatusBadge(order.status)}</TableCell>
                           <TableCell>
                             {order.deliveryDate ? Utils.formatDate(order.deliveryDate) : '-'}
-                          </TableCell>
-                          <TableCell>
-                            {order.lastUpdate ? Utils.formatDate(order.lastUpdate) : '-'}
                           </TableCell>
                           <TableCell>
                             {order.paymentDate ? 

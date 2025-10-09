@@ -7,7 +7,6 @@ import java.util.List;
 import com.elissandro.hdcontrol.entities.Order;
 import com.elissandro.hdcontrol.entities.enums.OrderStatus;
 
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 
 public class OrderDTO {
@@ -16,7 +15,6 @@ public class OrderDTO {
 	@NotBlank(message = "Campo obrigatório")
 	private String serviceDescription;
 	private String observation;
-	@FutureOrPresent(message = "Data de entrega deve ser atual ou futura")
 	private LocalDate deliveryDate;
 	private OrderStatus status;
 	private Double total;
