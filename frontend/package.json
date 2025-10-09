@@ -58,6 +58,6 @@
             "build": "vite build",
             "preview": "vite preview",
             "deploy": "npm run build && gh-pages -d dist --add",
-            "predeploy": "npm run build"
+            "predeploy": "npm run build" 
       }
 }

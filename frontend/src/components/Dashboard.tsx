@@ -508,7 +508,7 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
           <div className="flex-1 min-w-0">
             <h1 className="text-lg sm:text-xl truncate">Sistema de Ordens de Serviço</h1>
             <p className="text-muted-foreground text-sm">
-              {isAdmin ? 'Administrador' : Utils.isUserClient(user) ? 'Cliente' : 'Usuário'} - {user.firstName} {user.lastName}
+              {isAdmin ? 'Administrador' : Utils.isUserClient(user) ? 'Cliente' : 'Usuário'} - {user.firstName}
             </p>
           </div>
           <div className="flex gap-2 flex-shrink-0 w-full sm:w-auto">
