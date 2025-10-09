@@ -1,5 +1,5 @@
 // Configurações da API
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = 'eliss6171.c44.integrator.host/backend';
 const CLIENT_ID = 'myclientid';
 const CLIENT_SECRET = 'myclientsecret';
 
@@ -303,7 +303,7 @@ export const AuthService = {
     const recoveryData = {
       to: email,
       subject: "Recuperação de Senha",
-      body: "Recuperação de Senha você tem 30 minutos para utilizar o token contido nesse email: http://localhost:3000/recover-password/"
+      body: "Recuperação de Senha você tem 30 minutos para utilizar o token contido nesse email: https://elissandroa.github.io/hdcontrol-java/recover-password/"
     };
 
     const response = await fetch(`${API_BASE_URL}/auth/recover-token`, {
