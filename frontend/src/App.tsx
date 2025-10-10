@@ -21,10 +21,10 @@ export default function App() {
     const checkAuthentication = () => {
       // Verificar se há um token de reset na URL
       const urlPath = window.location.pathname;
-      
+
       // Regex para capturar o token, considerando barras duplas ou múltiplas
-      const recoverMatch = urlPath.match(/^\/recover-password\/+(.+)$/);
-      
+      const recoverMatch = urlPath.match(/(?:\/hdcontrol-java)?\/recover-password\/([^/]+)/);
+
       if (recoverMatch) {
         let token = recoverMatch[1];
         // Limpar o token de possíveis caracteres extras
@@ -34,7 +34,7 @@ export default function App() {
         setIsLoading(false);
         return;
       }
-      
+
       // Verificação normal de autenticação
       if (AuthService.isAuthenticated()) {
         const user = AuthService.getCurrentUser();
@@ -102,10 +102,10 @@ export default function App() {
       ) : appState === 'forgot-password' ? (
         <ForgotPasswordPage onBack={handleBackToLogin} />
       ) : appState === 'reset-password' ? (
-        <ResetPasswordPage 
-          token={resetToken} 
-          onSuccess={handleResetSuccess} 
-          onBack={handleBackToLogin} 
+        <ResetPasswordPage
+          token={resetToken}
+          onSuccess={handleResetSuccess}
+          onBack={handleBackToLogin}
         />
       ) : appState === 'admin' && currentUser && Utils.canAccessAdminPanel(currentUser) ? (
         <AdminPanel onBack={handleBackToDashboard} />
