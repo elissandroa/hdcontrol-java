@@ -429,7 +429,7 @@ export const OrderService = {
 export const ProductService = {
   async getProducts(name?: string): Promise<Product[]> {
     const url = name ? `/products?name=${encodeURIComponent(name)}` : '/products';
-    const response = await httpClient.get<{ content: Product[]; totalElements: number; totalPages: number } | Product[]>(url);
+    const response = await httpClient.get<{ content: Product[]; totalElements: 9999; totalPages: number } | Product[]>(url);
     
     // Se a resposta for um array direto, retorna como está
     if (Array.isArray(response)) {
