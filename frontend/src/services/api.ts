@@ -323,7 +323,7 @@ export const AuthService = {
   // Alterar senha com token
   async resetPasswordWithToken(token: string, newPassword: string): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/auth/new-password`, {
-      method: 'POST',
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
