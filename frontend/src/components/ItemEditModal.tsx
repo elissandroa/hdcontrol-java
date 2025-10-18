@@ -20,6 +20,15 @@ export function ItemEditModal({ item, onClose, onSave, onDelete }: ItemEditModal
   const [service, setService] = useState(item.service || '');
   const [observation, setObservation] = useState(item.observation || '');
 
+ // Atualiza os estados internos quando o item prop mudar
+  useEffect(() => {
+    setQuantity(item.quantity);
+    setPrice(item.price);
+    setDescription(item.description || '');
+    setService(item.service || '');
+    setObservation(item.observation || '');
+  }, [item]);
+
   // Calcula o subtotal automaticamente
   const subTotal = quantity * price;
 

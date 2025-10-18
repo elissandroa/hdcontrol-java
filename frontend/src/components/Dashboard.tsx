@@ -5,7 +5,7 @@ import { Input } from './ui/input';
 import { Badge } from './ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import { 
+import {
   Pagination,
   PaginationContent,
   PaginationEllipsis,
@@ -14,14 +14,14 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from './ui/pagination';
-import { 
-  Settings, 
-  LogOut, 
-  Plus, 
-  Search, 
-  Eye, 
-  RotateCcw, 
-  Truck, 
+import {
+  Settings,
+  LogOut,
+  Plus,
+  Search,
+  Eye,
+  RotateCcw,
+  Truck,
   CreditCard
 } from 'lucide-react';
 
@@ -32,13 +32,13 @@ import { PaymentModal } from './PaymentModal';
 import { NewOrderModal } from './NewOrderModal';
 import { MobileOrderCard } from './MobileOrderCard';
 
-import { 
-  OrderService, 
+import {
+  OrderService,
   ProductService,
   PaymentService,
-  Utils, 
-  type User, 
-  type OrderDetailed, 
+  Utils,
+  type User,
+  type OrderDetailed,
   type Product
 } from '../services/api';
 
@@ -59,7 +59,7 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
   const [paymentModalOrder, setPaymentModalOrder] = useState<OrderDetailed | null>(null);
   const [showNewOrderModal, setShowNewOrderModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Estados para paginação
   const [currentPage, setCurrentPage] = useState(0); // A API usa índice baseado em 0
   const [totalPages, setTotalPages] = useState(0);
@@ -67,7 +67,7 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
   const [pageSize, setPageSize] = useState(20);
   const [sortOrder, setSortOrder] = useState('id,desc');
   const [isFirstLoad, setIsFirstLoad] = useState(true);
-  
+
   // Estados para resumo financeiro
   const [financialSummary, setFinancialSummary] = useState({
     unpaidTotal: 0,
@@ -84,65 +84,62 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
   // Função para carregar resumo financeiro (todas as ordens)
   const loadFinancialSummary = async () => {
     try {
-      console.log('Carregando resumo financeiro...');
-      
+
       let allOrdersData;
-      
+
       // Buscar todas as ordens para o resumo financeiro (sem paginação)
       if (isAdmin) {
-        console.log('Carregando todas as ordens para resumo como ADMIN');
+
         allOrdersData = await OrderService.getAllOrdersForAdmin({ size: 9999 }); // Tamanho grande para pegar todas
       } else if (Utils.isUserClient(user)) {
-        console.log('Carregando todas as ordens para resumo como CLIENT para userId:', user.id);
+
         allOrdersData = await OrderService.getOrders({ userId: user.id, size: 9999 });
       } else if (Utils.isUserNormal(user)) {
-        console.log('Carregando todas as ordens para resumo como USER para userId:', user.id);
+
         allOrdersData = await OrderService.getOrders({ userId: user.id, size: 9999 });
       } else {
-        console.log('Tipo de usuário não reconhecido, carregando todas as ordens para resumo');
+
         allOrdersData = await OrderService.getOrders({ userId: user.id, size: 9999 });
       }
-      
+
       const allOrders = allOrdersData.content || [];
-      
+
       // Buscar todos os pagamentos para atualizar status
       let paymentsData: any[] = [];
       try {
-        console.log('Buscando TODOS os dados de pagamentos para resumo...');
+
         paymentsData = await PaymentService.getAllPayments();
-        console.log('Pagamentos encontrados para resumo:', paymentsData.length);
+
       } catch (error) {
         console.error('Erro ao buscar pagamentos para resumo:', error);
       }
-      
+
       // Aplicar dados de pagamento às ordens
       const ordersWithPayments = allOrders.map(order => {
         const payment = paymentsData.find(p => p.order?.id === order.id);
-        
+
         if (payment) {
-          console.log(`Resumo: Encontrado pagamento para ordem ${order.id}:`, payment);
+
           return {
             ...order,
             paymentDate: payment.moment,
             status: payment.status === 'PAID' ? 'PAID' as const : order.status
           };
         }
-        
+
         return order;
       });
 
-      console.log(`Resumo: Processadas ${allOrders.length} ordens com ${paymentsData.length} pagamentos`);
-      console.log('IDs das ordens com pagamento:', paymentsData.map(p => p.order?.id).filter(id => id));
-      console.log('IDs de todas as ordens:', allOrders.map(o => o.id));
-      
+
+
       // Calcular resumo financeiro
       const unpaidOrders = ordersWithPayments.filter(order => order.status !== 'PAID');
       const paidOrders = ordersWithPayments.filter(order => order.status === 'PAID');
-      
+
       const unpaidTotal = Utils.calculateUnpaidOrdersTotal(unpaidOrders);
       const paidTotal = paidOrders.reduce((total, order) => total + Utils.calculateOrderTotal(order.items), 0);
       const grandTotal = ordersWithPayments.reduce((total, order) => total + Utils.calculateOrderTotal(order.items), 0);
-      
+
       setFinancialSummary({
         unpaidTotal,
         unpaidCount: unpaidOrders.length,
@@ -151,16 +148,8 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
         grandTotal,
         totalCount: ordersWithPayments.length
       });
-      
-      console.log('Resumo financeiro calculado:', {
-        unpaidTotal,
-        unpaidCount: unpaidOrders.length,
-        paidTotal,
-        paidCount: paidOrders.length,
-        grandTotal,
-        totalCount: ordersWithPayments.length
-      });
-      
+
+
     } catch (error) {
       console.error('Erro ao carregar resumo financeiro:', error);
       // Manter valores zerados em caso de erro
@@ -179,65 +168,51 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
   const reloadData = async (page = currentPage) => {
     try {
       setIsLoading(true);
-      
-      console.log('Dashboard - Informações do usuário:');
-      console.log('- User:', user);
-      console.log('- Roles:', user.roles);
-      console.log('- IsAdmin:', isAdmin);
-      console.log('- canAccessAllOrders:', Utils.canAccessAllOrders(user));
-      console.log('- canOnlyViewOwnOrders:', Utils.canOnlyViewOwnOrders(user));
-      
+
+
       // Carregar ordens e produtos separadamente para melhor tratamento de erro
       let ordersResponse: OrderDetailed[] = [];
       let productsResponse: Product[] = [];
-      
+
       try {
-        console.log('Tentando carregar ordens...');
-        console.log('Usuário:', { id: user.id, isAdmin });
-        console.log('Paginação:', { page, size: pageSize, sort: sortOrder });
-        
+
         let ordersData;
-        
+
         const paginationParams = {
           page,
           size: pageSize,
           sort: sortOrder
         };
-        
+
         if (isAdmin) {
-          console.log('Carregando ordens como ADMIN');
+
           ordersData = await OrderService.getAllOrdersForAdmin(paginationParams);
         } else if (Utils.isUserClient(user)) {
-          console.log('Carregando ordens como CLIENT para userId:', user.id);
+
           ordersData = await OrderService.getOrders({ ...paginationParams, userId: user.id });
         } else if (Utils.isUserNormal(user)) {
-          console.log('Carregando ordens como USER para userId:', user.id);
+
           ordersData = await OrderService.getOrders({ ...paginationParams, userId: user.id });
         } else {
-          console.log('Tipo de usuário não reconhecido, carregando ordens gerais');
+
           ordersData = await OrderService.getOrders({ ...paginationParams, userId: user.id });
         }
-        
+
         ordersResponse = ordersData.content || [];
         setTotalPages(ordersData.totalPages || 0);
         setTotalElements(ordersData.totalElements || 0);
         setCurrentPage(page);
-        console.log('Ordens carregadas:', {
-          total: ordersResponse?.length || 0,
-          totalElements: ordersData.totalElements,
-          totalPages: ordersData.totalPages,
-          currentPage: page
-        });
+
       } catch (error) {
         console.error('Erro ao carregar ordens:', error);
         ordersResponse = [];
         setTotalPages(0);
         setTotalElements(0);
       }
-      
+
       try {
         productsResponse = await ProductService.getProducts();
-        console.log('Produtos carregados:', productsResponse?.length || 0);
+
       } catch (error) {
         console.error('Erro ao carregar produtos:', error);
         // Em caso de erro, inicializa como array vazio
@@ -247,10 +222,9 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
       // Buscar todos os pagamentos de uma vez (independente da paginação de ordens)
       let paymentsData: any[] = [];
       try {
-        console.log('Buscando TODOS os dados de pagamentos...');
+
         paymentsData = await PaymentService.getAllPayments();
-        console.log('Pagamentos encontrados:', paymentsData.length);
-        console.log('Primeiro pagamento:', paymentsData[0]);
+
       } catch (error) {
         console.error('Erro ao buscar pagamentos:', error);
       }
@@ -259,9 +233,9 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
       const ordersWithPayments = ordersResponse.map(order => {
         // Procurar pagamento correspondente a esta ordem
         const payment = paymentsData.find(p => p.order?.id === order.id);
-        
+
         if (payment) {
-          console.log(`Encontrado pagamento para ordem ${order.id}:`, payment);
+
           return {
             ...order,
             paymentDate: payment.moment, // Usar o campo 'moment' como paymentDate
@@ -270,20 +244,18 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
           };
         } else {
           // Log para ordens sem pagamento na página atual
-          console.log(`Nenhum pagamento encontrado para ordem ${order.id}`);
+
         }
-        
+
         return order;
       });
 
-      console.log(`Processadas ${ordersResponse.length} ordens da página atual com ${paymentsData.length} pagamentos totais`);
-
       setProducts(productsResponse);
-      
+
       // Para admin, mostra todas as ordens; para usuários normais, a API já filtrou pelo userId
       setOrders(ordersWithPayments);
-      
-      console.log('Dashboard carregado - Ordens:', ordersWithPayments.length, 'Produtos:', productsResponse.length);
+
+
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
       // Definir valores padrão em caso de erro
@@ -330,13 +302,13 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
   // Com paginação, os filtros são aplicados no servidor
   // Por enquanto, mantemos o filtro local para funcionalidade básica
   const filteredOrders = orders.filter(order => {
-    const matchesSearch = searchTerm === '' || 
+    const matchesSearch = searchTerm === '' ||
       order.id.toString().includes(searchTerm) ||
       `${order.user.firstName} ${order.user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = statusFilter === 'all' || 
+
+    const matchesStatus = statusFilter === 'all' ||
       Utils.formatOrderStatus(order.status) === statusFilter;
-    
+
     return matchesSearch && matchesStatus;
   });
 
@@ -366,7 +338,7 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
       // Calcula totais
       const calculatedTotal = Utils.calculateOrderTotal(updatedOrder.items);
       const totalQuantity = updatedOrder.items.reduce((sum, item) => sum + item.quantity, 0);
-      
+
       // Converte para formato da API conforme estrutura do Postman
       const orderForAPI: any = {
         serviceDescription: updatedOrder.serviceDescription,
@@ -399,42 +371,36 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
             observation: item.observation || '',
             subTotal: subTotal
           };
-          
+
           // Só inclui ID se existir e não for temporário
           const isTemporaryId = item.id && typeof item.id === 'number' && item.id >= 1000000000000;
           if (!isTemporaryId && item.id) {
             finalItem.id = item.id;
           }
-          
+
           return finalItem;
         }),
         products: [] // Array vazio conforme estrutura da API
       };
-      
-      console.log('Atualizando ordem:', updatedOrder.id);
-      console.log('Items originais:', updatedOrder.items.length);
-      console.log('Items para API:', orderForAPI.items.length);
-      console.log('Total calculado:', calculatedTotal);
-      console.log('JSON completo para API:', JSON.stringify(orderForAPI, null, 2));
 
+      
       // Só inclui deliveryDate se foi fornecida
       if (updatedOrder.deliveryDate) {
         orderForAPI.deliveryDate = updatedOrder.deliveryDate;
       }
 
       const result = await OrderService.updateOrder(updatedOrder.id, orderForAPI);
-      console.log('Resultado da atualização:', result);
-      
+     
       // Recarregar todos os dados para garantir sincronização
       await reloadData();
       await loadFinancialSummary(); // Recarregar resumo financeiro
-      
+
     } catch (error) {
       console.error('Erro detalhado ao atualizar ordem:', error);
       const updatedWithTotal = { ...updatedOrder, total: Utils.calculateOrderTotal(updatedOrder.items) };
-      
+
       // Atualiza localmente mesmo se a API falhar
-      setOrders(orders.map(order => 
+      setOrders(orders.map(order =>
         order.id === updatedOrder.id ? updatedWithTotal : order
       ));
     } finally {
@@ -472,11 +438,11 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
       }
 
       await OrderService.createOrder(orderForAPI);
-      
+
       // Recarregar todos os dados para garantir sincronização
       await reloadData();
       await loadFinancialSummary(); // Recarregar resumo financeiro
-      
+
     } catch (error) {
       console.error('Erro ao criar ordem:', error);
       // Mock order para fallback
@@ -552,7 +518,7 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
                   </div>
                 </div>
               </div>
-              
+
               <div className="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
@@ -569,7 +535,7 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
                   </div>
                 </div>
               </div>
-              
+
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 sm:col-span-2 lg:col-span-1">
                 <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
@@ -620,8 +586,8 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
                     <SelectItem value="Pago">Pago</SelectItem>
                   </SelectContent>
                 </Select>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={applyFilters}
                   className="w-full sm:w-auto"
                 >
@@ -681,8 +647,8 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
                             {order.deliveryDate ? Utils.formatDate(order.deliveryDate) : '-'}
                           </TableCell>
                           <TableCell>
-                            {order.paymentDate ? 
-                              Utils.formatDate(order.paymentDate) : 
+                            {order.paymentDate ?
+                              Utils.formatDate(order.paymentDate) :
                               '-'
                             }
                           </TableCell>
@@ -749,7 +715,7 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
               </>
             )}
           </CardContent>
-          
+
           {/* Controles de Paginação */}
           {!isLoading && totalPages > 0 && (
             <div className="border-t bg-gray-50 px-6 py-4">
@@ -767,8 +733,8 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
                   {/* Seletor de tamanho da página */}
                   <div className="flex items-center gap-2">
                     <span className="text-sm">Itens por página:</span>
-                    <Select 
-                      value={pageSize.toString()} 
+                    <Select
+                      value={pageSize.toString()}
                       onValueChange={(value) => handlePageSizeChange(Number(value))}
                     >
                       <SelectTrigger className="w-20">
@@ -786,8 +752,8 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
                   {/* Seletor de ordenação */}
                   <div className="flex items-center gap-2">
                     <span className="text-sm">Ordenar por:</span>
-                    <Select 
-                      value={sortOrder} 
+                    <Select
+                      value={sortOrder}
                       onValueChange={handleSortChange}
                     >
                       <SelectTrigger className="w-40">
@@ -808,7 +774,7 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
                     <Pagination>
                       <PaginationContent>
                         <PaginationItem>
-                          <PaginationPrevious 
+                          <PaginationPrevious
                             onClick={() => handlePageChange(currentPage - 1)}
                             className={currentPage === 0 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                           />
@@ -857,7 +823,7 @@ export function Dashboard({ user, onLogout, onOpenAdmin }: DashboardProps) {
                         )}
 
                         <PaginationItem>
-                          <PaginationNext 
+                          <PaginationNext
                             onClick={() => handlePageChange(currentPage + 1)}
                             className={currentPage === totalPages - 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                           />

@@ -140,11 +140,11 @@ class TokenManager {
 // Cliente HTTP com interceptadores
 class HttpClient {
   private async request<T>(
-    url: string, 
+    url: string,
     options: RequestInit = {}
   ): Promise<T> {
     const token = TokenManager.getToken();
-    
+
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
       ...options.headers,
@@ -161,7 +161,7 @@ class HttpClient {
     };
 
     const response = await fetch(`${API_BASE_URL}${url}`, config);
-    
+
     // Se token expirou, redireciona para login
     if (response.status === 401) {
       TokenManager.removeToken();
@@ -179,7 +179,7 @@ class HttpClient {
     if (contentType && contentType.includes('application/json')) {
       return await response.json();
     }
-    
+
     return {} as T;
   }
 
@@ -214,7 +214,7 @@ export const AuthService = {
   async login(username: string, password: string): Promise<{ user: User; token: string }> {
     // Prepara Basic Auth para o client
     const clientAuth = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
-    
+
     // Prepara dados do formulário
     const formData = new URLSearchParams();
     formData.append('grant_type', 'password');
@@ -236,7 +236,7 @@ export const AuthService = {
     }
 
     const authData: AuthResponse = await response.json();
-    
+
     // Salva o token
     TokenManager.setToken(authData.access_token);
 
@@ -352,7 +352,7 @@ export const OrderService = {
     userId?: number;
   } = {}): Promise<{ content: OrderDetailed[]; totalElements: number; totalPages: number }> {
     const queryParams = new URLSearchParams();
-    
+
     if (params.sort) queryParams.append('sort', params.sort);
     if (params.size) queryParams.append('size', params.size.toString());
     if (params.page) queryParams.append('page', params.page.toString());
@@ -360,10 +360,10 @@ export const OrderService = {
 
     const queryString = queryParams.toString();
     const url = queryString ? `/orders?${queryString}` : '/orders';
-    
+
     try {
       const response = await httpClient.get<{ content: OrderDetailed[]; totalElements: number; totalPages: number }>(url);
-      
+
       // Se a resposta for um array direto (não paginado), adapta para o formato esperado
       if (Array.isArray(response)) {
         return {
@@ -372,7 +372,7 @@ export const OrderService = {
           totalPages: 1
         };
       }
-      
+
       return response;
     } catch (error) {
       console.error('Erro ao buscar ordens:', error);
@@ -386,17 +386,17 @@ export const OrderService = {
     page?: number;
   } = {}): Promise<{ content: OrderDetailed[]; totalElements: number; totalPages: number }> {
     const queryParams = new URLSearchParams();
-    
+
     if (params.sort) queryParams.append('sort', params.sort);
     if (params.size) queryParams.append('size', params.size.toString());
     if (params.page) queryParams.append('page', params.page.toString());
 
     const queryString = queryParams.toString();
     const url = queryString ? `/orders/allorders?${queryString}` : '/orders/allorders';
-    
+
     try {
       const response = await httpClient.get<{ content: OrderDetailed[]; totalElements: number; totalPages: number }>(url);
-      
+
       // Se a resposta for um array direto (não paginado), adapta para o formato esperado
       if (Array.isArray(response)) {
         return {
@@ -405,7 +405,7 @@ export const OrderService = {
           totalPages: 1
         };
       }
-      
+
       return response;
     } catch (error) {
       console.error('Erro ao buscar todas as ordens:', error);
@@ -428,14 +428,14 @@ export const OrderService = {
 
 export const ProductService = {
   async getProducts(name?: string): Promise<Product[]> {
-    const url = name ? `/products?name=${encodeURIComponent(name)}` : '/products';
+    const url = name ? `/products?name=${encodeURIComponent(name)}` : '/products?size=9999&page=0';
     const response = await httpClient.get<{ content: Product[]; totalElements: number; totalPages: number } | Product[]>(url);
-    
+
     // Se a resposta for um array direto, retorna como está
     if (Array.isArray(response)) {
       return response;
     }
-    
+
     // Se a resposta for paginada, retorna o conteúdo
     return response.content || [];
   },
@@ -478,9 +478,9 @@ export const UserService = {
         const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
         const firstName = user.firstName.toLowerCase();
         const lastName = user.lastName.toLowerCase();
-        return fullName.includes(searchTerm) || 
-               firstName.includes(searchTerm) || 
-               lastName.includes(searchTerm);
+        return fullName.includes(searchTerm) ||
+          firstName.includes(searchTerm) ||
+          lastName.includes(searchTerm);
       });
     } catch (error) {
       console.error('Erro ao buscar usuários:', error);
@@ -512,24 +512,24 @@ export const PaymentService = {
         size: params.size || 9999,
         page: params.page || 0
       };
-      
+
       const queryParams = new URLSearchParams();
       queryParams.append('size', defaultParams.size.toString());
       queryParams.append('page', defaultParams.page.toString());
-      
+
       const queryString = queryParams.toString();
       const url = `/payments?${queryString}`;
-      
+
       console.log(`PaymentService.getPayments: Buscando pagamentos com URL: ${url}`);
-      
+
       const response = await httpClient.get<{ content: Payment[]; totalElements: number; totalPages: number } | Payment[]>(url);
-      
+
       // Se a resposta for um array direto, retorna como está
       if (Array.isArray(response)) {
         console.log(`PaymentService.getPayments: Recebidos ${response.length} pagamentos (array direto)`);
         return response;
       }
-      
+
       // Se a resposta for paginada, retorna o conteúdo
       const content = response.content || [];
       console.log(`PaymentService.getPayments: Recebidos ${content.length} pagamentos de ${response.totalElements} total`);
@@ -543,18 +543,16 @@ export const PaymentService = {
   async getAllPayments(): Promise<Payment[]> {
     try {
       // Busca especificamente TODOS os pagamentos sem limitação
-      console.log('PaymentService.getAllPayments: Buscando TODOS os pagamentos...');
       const response = await httpClient.get<{ content: Payment[]; totalElements: number; totalPages: number } | Payment[]>('/payments?size=9999&page=0');
-      
+
       // Se a resposta for um array direto, retorna como está
       if (Array.isArray(response)) {
-        console.log(`PaymentService.getAllPayments: Recebidos ${response.length} pagamentos (array direto)`);
         return response;
       }
-      
+
       // Se a resposta for paginada, retorna o conteúdo
       const content = response.content || [];
-      console.log(`PaymentService.getAllPayments: Recebidos ${content.length} pagamentos de ${response.totalElements} total`);
+      
       return content;
     } catch (error) {
       console.error('Erro ao buscar todos os pagamentos:', error);
@@ -683,15 +681,15 @@ export const Utils = {
   }
 };
 
-export type { 
-  User, 
-  Order, 
-  OrderDetailed, 
-  Product, 
-  OrderItem, 
-  OrderItemDetailed, 
-  Payment, 
-  Role, 
-  UserCreate, 
-  UserUpdate 
+export type {
+  User,
+  Order,
+  OrderDetailed,
+  Product,
+  OrderItem,
+  OrderItemDetailed,
+  Payment,
+  Role,
+  UserCreate,
+  UserUpdate
 };

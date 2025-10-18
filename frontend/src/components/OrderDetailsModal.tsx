@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -11,6 +11,9 @@ import { ProductSelector } from './ProductSelector';
 import { ItemEditModal } from './ItemEditModal';
 import { Edit, Trash2 } from 'lucide-react';
 import { type OrderDetailed, type Product, type OrderItemDetailed, Utils } from '../services/api';
+
+// Contador para gerar IDs únicos temporários (baseado em timestamp)
+let tempIdCounter = Date.now();
 
 interface OrderDetailsModalProps {
   order: OrderDetailed;
@@ -25,6 +28,35 @@ export function OrderDetailsModal({ order, products, isAdmin, onClose, onSave }:
   const [isEditing, setIsEditing] = useState(false);
   const [editingItem, setEditingItem] = useState<OrderItemDetailed | null>(null);
 
+  // Garantir que todos os itens tenham IDs únicos quando a ordem é carregada
+  useEffect(() => {
+    console.log('OrderDetailsModal - ordem original recebida:', {
+      orderId: order.id,
+      items: order.items.map(i => ({ id: i.id, product: i.product?.name, quantity: i.quantity }))
+    });
+
+    const orderWithIds = {
+      ...order,
+      items: order.items.map((item, index) => {
+        // Se o item não tem ID ou tem ID inválido, atribui um ID temporário único
+        if (!item.id || item.id === undefined) {
+          const newId = tempIdCounter++;
+          console.log(`Atribuindo ID temporário ${newId} ao item ${item.product?.name}`);
+          return { ...item, id: newId };
+        }
+        console.log(`Item ${item.product?.name} já tem ID: ${item.id}`);
+        return item;
+      })
+    };
+
+    console.log('OrderDetailsModal - ordem com IDs:', {
+      orderId: orderWithIds.id,
+      items: orderWithIds.items.map(i => ({ id: i.id, product: i.product?.name, quantity: i.quantity }))
+    });
+
+    setEditingOrder(orderWithIds);
+  }, [order]);
+
   const handleSave = () => {
     onSave(editingOrder);
     setIsEditing(false);
@@ -38,7 +70,7 @@ export function OrderDetailsModal({ order, products, isAdmin, onClose, onSave }:
 
   const addProduct = (product: Product, quantity: number, customPrice?: number) => {
     const newItem: OrderItemDetailed = {
-      id: Date.now(), // ID temporário para itens novos
+      id: tempIdCounter++, // ID temporário para itens novos
       product: product,
       quantity: quantity,
       price: customPrice ?? product.price,
@@ -47,7 +79,7 @@ export function OrderDetailsModal({ order, products, isAdmin, onClose, onSave }:
       observation: '',
       subTotal: quantity * (customPrice ?? product.price)
     };
-    
+
     setEditingOrder({
       ...editingOrder,
       items: [...editingOrder.items, newItem],
@@ -74,7 +106,7 @@ export function OrderDetailsModal({ order, products, isAdmin, onClose, onSave }:
   };
 
   const updateItem = (updatedItem: OrderItemDetailed) => {
-    const newItems = editingOrder.items.map(item => 
+    const newItems = editingOrder.items.map(item =>
       item.id === updatedItem.id ? updatedItem : item
     );
     setEditingOrder({
@@ -85,7 +117,7 @@ export function OrderDetailsModal({ order, products, isAdmin, onClose, onSave }:
   };
 
   const updateProductQuantity = (index: number, quantity: number) => {
-    const newItems = editingOrder.items.map((item, i) => 
+    const newItems = editingOrder.items.map((item, i) =>
       i === index ? { ...item, quantity } : item
     );
     setEditingOrder({
@@ -96,7 +128,7 @@ export function OrderDetailsModal({ order, products, isAdmin, onClose, onSave }:
   };
 
   const updateProductPrice = (index: number, price: number) => {
-    const newItems = editingOrder.items.map((item, i) => 
+    const newItems = editingOrder.items.map((item, i) =>
       i === index ? { ...item, price } : item
     );
     setEditingOrder({
@@ -136,18 +168,18 @@ export function OrderDetailsModal({ order, products, isAdmin, onClose, onSave }:
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <Label>Cliente</Label>
-              <Input 
-                value={`${editingOrder.user.firstName} ${editingOrder.user.lastName}`} 
-                disabled 
+              <Input
+                value={`${editingOrder.user.firstName} ${editingOrder.user.lastName}`}
+                disabled
                 className="bg-gray-50"
               />
             </div>
             <div>
               <Label>Status</Label>
               {isEditing && isAdmin ? (
-                <Select 
-                  value={editingOrder.status} 
-                  onValueChange={(value: 'PENDING' | 'READY' | 'PAID') => 
+                <Select
+                  value={editingOrder.status}
+                  onValueChange={(value: 'PENDING' | 'READY' | 'PAID') =>
                     setEditingOrder({ ...editingOrder, status: value })
                   }
                 >
@@ -168,7 +200,7 @@ export function OrderDetailsModal({ order, products, isAdmin, onClose, onSave }:
             </div>
             <div>
               <Label>Data de Entrega</Label>
-              <Input 
+              <Input
                 type="date"
                 value={editingOrder.deliveryDate || ''}
                 onChange={(e) => setEditingOrder({ ...editingOrder, deliveryDate: e.target.value })}
@@ -177,9 +209,9 @@ export function OrderDetailsModal({ order, products, isAdmin, onClose, onSave }:
             </div>
             <div>
               <Label>Total</Label>
-              <Input 
-                value={`R$ ${(editingOrder.total || 0).toFixed(2)}`} 
-                disabled 
+              <Input
+                value={`R$ ${(editingOrder.total || 0).toFixed(2)}`}
+                disabled
                 className="bg-gray-50"
               />
             </div>
@@ -220,7 +252,7 @@ export function OrderDetailsModal({ order, products, isAdmin, onClose, onSave }:
 
             <div className="space-y-3">
               {editingOrder.items.map((item, index) => (
-                <div key={`${item.product.id}-${index}`} className="border rounded-lg p-4 space-y-3">
+                <div key={item.id || `item-${index}`} className="border rounded-lg p-4 space-y-3">
                   {/* Cabeçalho do item */}
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
@@ -295,7 +327,7 @@ export function OrderDetailsModal({ order, products, isAdmin, onClose, onSave }:
                   )}
                 </div>
               ))}
-              
+
               {editingOrder.items.length === 0 && (
                 <div className="text-center py-4 text-muted-foreground">
                   Nenhum produto adicionado
