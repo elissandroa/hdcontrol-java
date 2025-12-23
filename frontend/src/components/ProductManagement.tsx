@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { Alert, AlertDescription } from './ui/alert';
 import { ProductService, type Product } from '../services/api';
-import { toast } from "sonner@2.0.3";
+import { toast } from "sonner";
 
 export function ProductManagement() {
   const [products, setProducts] = useState<Product[]>([]);

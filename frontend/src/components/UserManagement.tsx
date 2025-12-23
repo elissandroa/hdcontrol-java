@@ -16,7 +16,7 @@ import {
   type UserUpdate, 
   type Role 
 } from '../services/api';
-import { toast } from "sonner@2.0.3";
+import { toast } from "sonner";
 
 export function UserManagement() {
   const [users, setUsers] = useState<User[]>([]);
