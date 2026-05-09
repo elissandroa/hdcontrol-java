@@ -75,7 +75,7 @@ export function ApiConnectionStatus({ children }: ApiConnectionStatusProps) {
             <div className="space-y-3">
               <h4 className="font-medium">Instruções para iniciar a API:</h4>
               <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
-                <li>Certifique-se de que a API Spring Boot está rodando em <code className="bg-muted px-1 rounded">eliss6171.c44.integrator.host:23729</code></li>
+                <li>Certifique-se de que a API Spring Boot está rodando em <code className="bg-muted px-1 rounded">hdcontrol.vps6855.panel.icontainer.run</code></li>
                 <li>Verifique se o endpoint OAuth2 <code className="bg-muted px-1 rounded">/oauth2/token</code> está acessível</li>
                 <li>Confirme que o banco de dados está configurado e rodando</li>
                 <li>Verifique se não há firewall bloqueando a porta 23729</li>

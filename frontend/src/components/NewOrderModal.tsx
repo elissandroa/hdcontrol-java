@@ -166,7 +166,7 @@ export function NewOrderModal({ products, isAdmin, currentUser, onClose, onSave 
               {selectedProducts.map((item, index) => (
                 <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 border rounded-lg">
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium truncate">{item.product.name}</div>
+                    <div className="font-medium truncate">{item.product.description}</div>
                     <div className="text-sm text-muted-foreground truncate">{item.product.brand}</div>
                   </div>
                   <div className="flex flex-wrap items-center gap-2 sm:gap-4 w-full sm:w-auto">

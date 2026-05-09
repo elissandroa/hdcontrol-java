@@ -64,7 +64,7 @@ export function ProductSelector({ products, isAdmin = true, onAddProduct }: Prod
                 {products && products.length > 0 ? (
                   products.map((product) => (
                     <SelectItem key={product.id} value={product.id.toString()}>
-                      {product.name} - {product.brand} - R$ {product.price.toFixed(2)}
+                      {product.description} - R$ {product.price.toFixed(2)}
                     </SelectItem>
                   ))
                 ) : (

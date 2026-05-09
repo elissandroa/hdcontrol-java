@@ -1,5 +1,5 @@
 // Configurações da API
-const API_BASE_URL = 'https://hdcontrol-proxy.vercel.app';
+const API_BASE_URL = 'https://hdcontrol.vps6855.panel.icontainer.run';
 const CLIENT_ID = 'myclientid';
 const CLIENT_SECRET = 'myclientsecret';
 

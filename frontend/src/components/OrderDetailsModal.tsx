@@ -32,7 +32,7 @@ export function OrderDetailsModal({ order, products, isAdmin, onClose, onSave }:
   useEffect(() => {
     console.log('OrderDetailsModal - ordem original recebida:', {
       orderId: order.id,
-      items: order.items.map(i => ({ id: i.id, product: i.product?.name, quantity: i.quantity }))
+      items: order.items.map(i => ({ id: i.id, product: i.product?.description, quantity: i.quantity }))
     });
 
     const orderWithIds = {
@@ -256,7 +256,7 @@ export function OrderDetailsModal({ order, products, isAdmin, onClose, onSave }:
                   {/* Cabeçalho do item */}
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <h4 className="font-medium">{item.product.name}</h4>
+                      <h4 className="font-medium">{item.product.description}</h4>
                       <p className="text-sm text-muted-foreground">{item.product.brand}</p>
                     </div>
                     {isAdmin && (
