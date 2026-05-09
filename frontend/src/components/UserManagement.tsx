@@ -94,7 +94,7 @@ export function UserManagement() {
         lastName: formData.lastName,
         email: formData.email,
         phone: formData.phone,
-        roles: formData.isAdmin ? [roles.find(r => r.authority === 'ROLE_ADMIN')!] : [roles.find(r => r.authority === 'ROLE_USER')!]
+        roles: formData.isAdmin ? [roles.find(r => r.authority === 'ROLE_USER')!] : [roles.find(r => r.authority === 'ROLE_ADMIN')!]
       };
 
       const updatedUser = await UserService.updateUser(editingUser.id, userData);
